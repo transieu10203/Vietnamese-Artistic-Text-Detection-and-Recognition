@@ -1,15 +1,11 @@
 import os
 import torch
 from torchvision.ops import nms
-
-
 TXT_PATH = "/content/UAIC_2022_Kronus/Detection/mer" 
-
 PATH = os.listdir(TXT_PATH)
 SAVE_PATH = '/content/UAIC_2022_Kronus/Submit' 
 IMAGE_PATH = '/content/data/uaic2022_private_test/images'
 IOU_THRES = 0.3
-
 os.makedirs(SAVE_PATH,exist_ok=True)
 for image in sorted(os.listdir(IMAGE_PATH)):
     txt_name = image.replace('jpg','txt')
