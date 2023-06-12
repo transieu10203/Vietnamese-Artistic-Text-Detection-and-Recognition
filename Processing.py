@@ -26,16 +26,16 @@ def Processing(img,cuda=True,w=''):
     parser.add_argument('--rotation', type=int, default=0, help='Angle of rotation (counter clockwise) in degrees.')
     parser.add_argument('--device', default='cpu')
     parser.add_argument('--custom', action='store_true', default=True, help='Evaluate on custom dataset')
-    parser.add_argument('--img_dir', type=str, required=True, help='Path to image folder')
-    parser.add_argument('--txt_dir', type=str, required=True, help='Path to gt folder')
+    parser.add_argument('--img_dir', type=str, required=False, help='Path to image folder')
+    parser.add_argument('--txt_dir', type=str, required=False, help='Path to gt folder')
     args, unknown = parser.parse_known_args()
     kwargs = parse_model_args(unknown)
     with open('config.yaml', 'r') as f:
         config = yaml.safe_load(f)
     args.device = config['device']
-    args.img_dir : config['img_dir']
-    args.txt_dir : config['txt_dir']
-    args.checkpoint : config['checkpoint']
+    args.img_dir = config['img_dir']
+    args.txt_dir = config['txt_dir']
+    args.checkpoint = config['checkpoint']
     model = load_from_checkpoint(args.checkpoint, **kwargs).eval().to(args.device)
     img_transform = SceneTextDataModule.get_transform(model.hparams.img_size, augment=False)
 
@@ -106,7 +106,7 @@ def Processing(img,cuda=True,w=''):
         score = round(float(score),3)
 
         count = 0
-        crop_im = img.crop((box[0], box[1], box[2], box[3]))
+        crop_im = image.crop((box[0], box[1], box[2], box[3]))
         # crop_im.save("test.jpg")
         crop_im = img_transform(crop_im).unsqueeze(0)
         crop_im = crop_im.to(args.device)
