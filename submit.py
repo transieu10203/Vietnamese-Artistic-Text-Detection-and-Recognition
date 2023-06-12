@@ -59,5 +59,5 @@ for img_f in tqdm(os.listdir(args.img_dir)):
     # except:
     #     with open(os.path.join(args.txt_dir,img_f.replace('.jpg','.txt')),'w',encoding='utf-8') as f:
     #         f.write("")
-print(count)
+# print(count)
 

@@ -1,0 +1,6 @@
+device : 'cpu'
+custom : True
+img_dir : ''
+txt_dir : ''
+checkpoint : ''
+    
