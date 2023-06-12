@@ -20,9 +20,14 @@ app = FastAPI()
 # Định nghĩa endpoint để nhận hình ảnh và xử lý
 @app.post("/process_image")
 async def process_image(image: UploadFile = File(...)):
-    # Đọc dữ liệu hình ảnh
-    image_data = await image.read()
-    image=Processing(image_data,w='')
+    # Read the image data
+    image = await image.read()
+
+    # Convert image data to OpenCV format
+    image = np.frombuffer(image, np.uint8)
+    image = cv2.imdecode(image, cv2.IMREAD_COLOR)
+    # Now you can process the image using cv2
+    image=Processing(image,w='')
     success, encoded_image = cv2.imencode('.jpg', image)
     image = encoded_image.tobytes()
     

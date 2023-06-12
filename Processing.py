@@ -2,7 +2,7 @@ import cv2
 import random
 import numpy as np
 import onnxruntime as ort
-from PIL import Image
+from PIL import Image, ImageDraw, ImageFont
 import numpy as np
 import os
 import argparse
@@ -95,9 +95,8 @@ def Processing(img,cuda=True,w=''):
     # ONNX inference
     outputs = session.run(outname, inp)[0]
     ori_images = [img.copy()]
-
+    image = ori_images[0]
     for _,(batch_id,x0,y0,x1,y1,cls_id,score) in enumerate(outputs):
-        image = ori_images[int(batch_id)]
         box = np.array([x0,y0,x1,y1])
         box -= np.array(dwdh*2)
         box /= ratio
@@ -106,6 +105,7 @@ def Processing(img,cuda=True,w=''):
         score = round(float(score),3)
 
         count = 0
+        image = Image.fromarray(image).convert('RGB')
         crop_im = image.crop((box[0], box[1], box[2], box[3]))
         # crop_im.save("test.jpg")
         crop_im = img_transform(crop_im).unsqueeze(0)
@@ -123,8 +123,20 @@ def Processing(img,cuda=True,w=''):
         pred_text = pred_strs[0]
         # pred_text = unidecode(pred_text)
         pred_text=str(pred_text)
+        font_path='Roboto-Regular.ttf'
+        font = ImageFont.truetype(font_path, 20)
+        # Draw the text on the blank image using the custom font
+        draw = ImageDraw.Draw(image)
+        text_width, text_height = draw.textsize(pred_text, font=font)
+        text_position = (box[0], box[1] - 20)
+        draw.text(text_position, pred_text, font=font, fill=(255, 255, 255))
+        # Load the font using PIL
+        # Convert PIL image to numpy array
+        image = np.array(image)
+        # Convert numpy array to cv2 image
+        image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
         cv2.rectangle(image,box[:2],box[2:],[225, 255, 255],2)
-        cv2.putText(image,pred_text,(box[0], box[1] - 2),cv2.FONT_HERSHEY_SIMPLEX,0.75,[225, 255, 255],thickness=2)  
-    return Image.fromarray(ori_images[0])
+        # cv2.putText(image,pred_text,(box[0], box[1] - 2),cv2.FONT_HERSHEY_SIMPLEX,0.75,[225, 255, 255],thickness=2)  
+    return image
     
     

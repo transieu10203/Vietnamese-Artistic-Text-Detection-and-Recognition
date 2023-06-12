@@ -1,4 +1,4 @@
-device : 'cpu'
+device : 'cuda'
 custom : True
 img_dir : ''
 txt_dir : ''
