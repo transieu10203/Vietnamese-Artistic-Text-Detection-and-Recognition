@@ -1,0 +1,3 @@
+
+!pip install unidecode 
+!python submit.py --checkpoint parseq_v1.ckpt --device 'cpu' --img_dir img --txt_dir txt
